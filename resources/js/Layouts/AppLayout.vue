@@ -27,7 +27,13 @@ const logout = () => {
     Inertia.post(route('logout'));
 };
 </script>
-
+<style>
+.badge {
+    position: relative;
+    top: -15px;
+    left: -3px;
+}
+</style>
 <template>
     <div>
         <Head :title="title" />
@@ -50,7 +56,20 @@ const logout = () => {
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Overview
+                                </NavLink>
+                                <NavLink :href="route('accounts.create')" :active="route().current('accounts.create')">
+                                    Create an account
+                                </NavLink>
+                                <NavLink :href="route('accounts.create.transfer')" :active="route().current('accounts.create.transfer')">
+                                    Transfer money
+                                </NavLink>
+                                <NavLink :href="route('crypto.index')" :active="route().current('crypto.index')">
+                                    Crypto market
+                                    <span class="badge bg-yellow-400 text-black rounded-full px-2 py-1 font-semibold">beta</span>
+                                </NavLink>
+                                <NavLink :href="route('user-cryptos.index')" :active="route().current('user-cryptos.index')">
+                                    Crypto portfolio
                                 </NavLink>
                             </div>
                         </div>
