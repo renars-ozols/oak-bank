@@ -32,6 +32,11 @@ class Account extends Model
         return $this->hasMany(UserCrypto::class);
     }
 
+    public function cryptoTransactions()
+    {
+        return $this->hasMany(CryptoTransaction::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

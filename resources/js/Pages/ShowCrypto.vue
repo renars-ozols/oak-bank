@@ -12,7 +12,10 @@ import SellButton from "@/Components/SellButton.vue";
 const props = defineProps({
     crypto: Object,
     accounts: Array,
+    accountsWithCrypto: Array,
 });
+
+//TODO: on select sell account, amount value should update
 
 const buyForm = useForm({
     account: '',
@@ -33,10 +36,10 @@ const submitBuyForm = () => {
 };
 
 const submitSellForm = () => {
-    form.transform(data => ({
+    sellForm.transform(data => ({
         ...data,
-    })).post(route('crypto.sell'), {
-        onFinish: () => form.reset('name', 'currency'),
+    })).post(route('crypto.sell', props.crypto.id), {
+        onFinish: () => sellForm.reset('name', 'currency'),
     });
 };
 
@@ -170,11 +173,12 @@ const onAccountChange = (event) => {
                         </form>
                         <form @submit.prevent="submitSellForm" class="w-1/2 mx-auto py-8 ml-2">
                             <div>
-                                <InputLabel for="account" value="Select account" />
+                                <InputLabel for="sell-account" value="Select account" />
                                 <SelectInput
-                                    id="account"
+                                    id="sell-account"
                                     v-model="sellForm.account"
-                                    :options="accounts"
+                                    :options="accountsWithCrypto"
+                                    valueProp="number"
                                     class="mt-1 block w-full"
                                     required
                                 />
@@ -182,9 +186,9 @@ const onAccountChange = (event) => {
                             </div>
 
                             <div class="mt-4">
-                                <InputLabel for="amount" value="Amount" />
+                                <InputLabel for="sell-amount" value="Amount" />
                                 <NumericInput
-                                    id="amount"
+                                    id="sell-amount"
                                     v-model="sellForm.amount"
                                     type="number"
                                     class="mt-1 block w-full"

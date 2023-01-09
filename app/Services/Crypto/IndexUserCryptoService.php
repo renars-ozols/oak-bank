@@ -2,6 +2,7 @@
 
 namespace App\Services\Crypto;
 
+use App\Models\CryptoTransaction;
 use App\Models\UserCrypto;
 use App\Repositories\Crypto\CryptoRepository;
 use Illuminate\Support\Collection;
@@ -22,6 +23,7 @@ class IndexUserCryptoService
             ->select('user_cryptos.*', 'accounts.number as account')
             ->join('accounts', 'accounts.id', '=', 'user_cryptos.account_id')
             ->get();
+
         //dd($cryptos);
         //dd($ids, $currencies);
         // get the current price for each crypto
@@ -30,6 +32,12 @@ class IndexUserCryptoService
             return $crypto;
         });
 
-        return $cryptos;
+        $transactions = CryptoTransaction::where('user_id', $userId)->get();
+        //dd($transactions);
+
+        return collect([
+            'cryptos' => $cryptos,
+            'transactions' => $transactions,
+        ]);
     }
 }

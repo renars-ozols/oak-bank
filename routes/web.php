@@ -45,4 +45,5 @@ Route::middleware([
     Route::get('/crypto', [CryptoController::class, 'index'])->name('crypto.index');
     Route::get('/crypto/{id}', [CryptoController::class, 'show'])->name('crypto.show');
     Route::post('/crypto/{id}/buy', [CryptoBuyAndSellController::class, 'buy'])->name('crypto.buy');
+    Route::post('/crypto/{id}/sell', [CryptoBuyAndSellController::class, 'sell'])->name('crypto.sell');
 });

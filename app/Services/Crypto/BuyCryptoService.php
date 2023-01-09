@@ -2,6 +2,7 @@
 
 namespace App\Services\Crypto;
 
+use App\Models\CryptoTransaction;
 use App\Models\UserCrypto;
 use App\Repositories\Crypto\CryptoRepository;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class BuyCryptoService
         $userAccount = auth()->user()->accounts()->where('number', $request->account)->first();
         $crypto = $this->repository->find($id, $userAccount->currency);
 
+        //TODO: wrap in transaction
         $userAccount->withdraw($crypto->price * $request->amount);
 
         $userCrypto = UserCrypto::firstOrNew([
@@ -35,6 +37,17 @@ class BuyCryptoService
         $userCrypto->amount += $request->amount;
         $userCrypto->save();
 
-        //TODO: create transaction
+        CryptoTransaction::create([
+            'user_id' => auth()->user()->id,
+            'account_id' => $userAccount->id,
+            'crypto_id' => $crypto->id,
+            'type' => 'buy',
+            'account_number' => $userAccount->number,
+            'currency' => $userAccount->currency,
+            'crypto_name' => $crypto->name,
+            'amount' => $request->amount,
+            'crypto_price' => $crypto->price,
+            'total' => $crypto->price * $request->amount,
+        ]);
     }
 }

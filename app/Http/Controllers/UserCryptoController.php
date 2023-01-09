@@ -22,9 +22,11 @@ class UserCryptoController extends Controller
 //            ->select('user_cryptos.*', 'accounts.number as account')
 //            ->join('accounts', 'accounts.id', '=', 'user_cryptos.account_id')
 //            ->get();
-        $cryptos = $this->indexUserCryptoService->execute(auth()->id());
+        $collection = $this->indexUserCryptoService->execute(auth()->id());
+        //dd($collection->get('cryptos'));
         return Inertia::render('CryptoPortfolio', [
-            'cryptos' => $cryptos,
+            'cryptos' => $collection->get('cryptos'),
+            'transactions' => $collection->get('transactions'),
         ]);
     }
 }

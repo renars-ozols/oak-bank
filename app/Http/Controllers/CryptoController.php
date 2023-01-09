@@ -35,9 +35,15 @@ class CryptoController extends Controller
         //dd($crypto);
         //auth user accounts with balance > 0
         $accounts = auth()->user()->accounts()->where('balance', '>', 0)->get();
+        // accounts with crypto
+        $accountsWithCrypto = auth()->user()->accounts()->whereHas('cryptos', function ($query) use ($id) {
+            $query->where('crypto_id', $id);
+        })->get();
+        //dd($accountsWithCrypto);
         return Inertia::render('ShowCrypto', [
             'crypto' => $crypto,
             'accounts' => $accounts,
+            'accountsWithCrypto' => $accountsWithCrypto,
         ]);
     }
 }
