@@ -3,6 +3,7 @@
 namespace App\Services\Account;
 
 use App\Models\Account;
+use App\Models\Transaction;
 use App\Repositories\Currencies\CurrencyRepository;
 use Illuminate\Http\Request;
 
@@ -36,5 +37,10 @@ class TransferService
         $recipientAccount->deposit($request->input('amount') * $exchangeRate);
 
         //TODO: create transaction
+        Transaction::query()->create([
+            'sender_account_id' => $userAccount->id,
+            'recipient_account_id' => $recipientAccount->id,
+            'amount' => $request->input('amount') * $exchangeRate,
+        ]);
     }
 }

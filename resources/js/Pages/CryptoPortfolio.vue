@@ -27,7 +27,7 @@ const formatDate = (date) => format(new Date(date), 'dd-MM-yyyy');
                             <th class="pb-4 pt-6 px-6">Amount</th>
                             <th class="pb-4 pt-6 px-6">Account</th>
                             <th class="pb-4 pt-6 px-6">Current value</th>
-                            <th class="pb-4 pt-6 px-6">Average price</th>
+                            <th class="pb-4 pt-6 px-6">Average buying price</th>
                             <th class="pb-4 pt-6 px-6">Current price</th>
                             <th class="pb-4 pt-6 px-6"></th>
                         </tr>
@@ -67,34 +67,21 @@ const formatDate = (date) => format(new Date(date), 'dd-MM-yyyy');
                             <td class="border-t">
                                 <Link class="flex items-center px-6 py-4" :href="`/organizations/${crypto.id}/edit`"
                                       tabindex="-1">
-                                    <!-- if percent change < 0 , then display red and add svg chevron down else color green and chevron up -->
-                                    <span v-if="1 < 0" class="text-red-500 flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                        </svg>
-                                        {{ 0 }}%
-                                    </span>
-                                    <span v-else class="text-green-500 flex items-center">
-                                        <!-- svg chevron up direction-->
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                             stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                          <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M4.5 15.75l7.5-7.5 7.5 7.5"/>
-                                        </svg>
-                                        +{{ 0 }}%
-                                    </span>
+                                    {{ formatPrice(crypto.current_value, crypto.currency) }}
                                 </Link>
                             </td>
                             <td class="border-t">
                                 <Link class="flex items-center px-6 py-4" :href="`/organizations/${crypto.id}/edit`"
                                       tabindex="-1">
                                     <!-- if percent change < 0 , then display red and add svg chevron down else color green and chevron up -->
-                                    <span v-if="1 < 0" class="text-red-500 flex items-center">
+                                    <div v-if="crypto.average_price > crypto.current_price" class="text-red-500 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
                                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                         </svg>
-                                        {{ 0 }}%
-                                    </span>
+                                        <span>{{ formatPrice(Number(crypto.average_price), crypto.currency) }}</span>
+                                        <span class="ml-1">({{ Number(((crypto.current_price - crypto.average_price) / crypto.average_price) * 100).toFixed(2) }}%)</span>
+                                    <!-- display percent change-->
+                                    </div>
                                     <span v-else class="text-green-500 flex items-center">
                                         <!-- svg chevron up direction-->
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -102,7 +89,8 @@ const formatDate = (date) => format(new Date(date), 'dd-MM-yyyy');
                                           <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M4.5 15.75l7.5-7.5 7.5 7.5"/>
                                         </svg>
-                                        +{{ 0 }}%
+                                        +{{ formatPrice(Number(crypto.average_price), crypto.currency) }}
+                                        <span class="ml-1">({{ Number(((crypto.current_price - crypto.average_price) / crypto.average_price) * 100).toFixed(2) }}%)</span>
                                     </span>
                                 </Link>
                             </td>

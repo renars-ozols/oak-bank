@@ -27,6 +27,16 @@ class Account extends Model
         $this->save();
     }
 
+    public function senderTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'sender_account_id');
+    }
+
+    public function recipientTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'recipient_account_id');
+    }
+
     public function cryptos()
     {
         return $this->hasMany(UserCrypto::class);

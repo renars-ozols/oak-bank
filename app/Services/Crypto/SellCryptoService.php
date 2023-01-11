@@ -38,6 +38,7 @@ class SellCryptoService
         CryptoTransaction::create([
             'user_id' => auth()->user()->id,
             'account_id' => $userAccount->id,
+            'user_crypto_id' => $userCrypto->id,
             'crypto_id' => $id,
             'type' => 'sell',
             'account_number' => $userAccount->number,

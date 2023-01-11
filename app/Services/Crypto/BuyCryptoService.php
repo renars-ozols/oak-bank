@@ -40,6 +40,7 @@ class BuyCryptoService
         CryptoTransaction::create([
             'user_id' => auth()->user()->id,
             'account_id' => $userAccount->id,
+            'user_crypto_id' => $userCrypto->id,
             'crypto_id' => $crypto->id,
             'type' => 'buy',
             'account_number' => $userAccount->number,

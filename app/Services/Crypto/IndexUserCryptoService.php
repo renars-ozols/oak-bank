@@ -27,14 +27,17 @@ class IndexUserCryptoService
         //dd($cryptos);
         //dd($ids, $currencies);
         // get the current price for each crypto
+
         $cryptos->map(function ($crypto) {
             $crypto->current_price = $this->repository->getCurrentPrice($crypto->crypto_id, $crypto->currency);
+            $crypto->current_value = $crypto->current_price * $crypto->amount;
+            $crypto->average_price = $crypto->transactions()->where('type', 'buy')->avg('crypto_price');
             return $crypto;
         });
 
-        $transactions = CryptoTransaction::where('user_id', $userId)->get();
+        //dd($cryptos);
+        $transactions = CryptoTransaction::where('user_id', $userId)->latest()->get();
         //dd($transactions);
-
         return collect([
             'cryptos' => $cryptos,
             'transactions' => $transactions,

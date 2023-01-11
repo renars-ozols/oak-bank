@@ -12,6 +12,7 @@ class CryptoTransaction extends Model
     protected $fillable = [
         'user_id',
         'account_id',
+        'user_crypto_id',
         'crypto_id',
         'type',
         'account_number',
@@ -30,5 +31,10 @@ class CryptoTransaction extends Model
     public function account()
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public function userCrypto()
+    {
+        return $this->belongsTo(UserCrypto::class);
     }
 }

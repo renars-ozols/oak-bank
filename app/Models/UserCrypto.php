@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserCrypto extends Model
 {
+    use SoftDeletes;
     use HasFactory;
 
     protected $fillable = [
@@ -28,5 +30,10 @@ class UserCrypto extends Model
     public function account()
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(CryptoTransaction::class);
     }
 }
