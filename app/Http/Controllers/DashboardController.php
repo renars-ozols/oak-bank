@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
+use App\Http\Requests\TransactionFilterRequest;
 use App\Models\Transaction;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(TransactionFilterRequest $request)
     {
+        //dd($request->all());
         $accounts = auth()->user()->accounts()->get();
-        // all transactions for user each account
-        $ids = $accounts->pluck('id');
-        //dd($ids);
         $transactions = Transaction::query()
-            //TODO: test this
             ->whereIn('sender_account_id', $accounts->pluck('id'))
             ->orWhereIn('recipient_account_id', $accounts->pluck('id'))
             ->with(['senderAccount:id,user_id,number,name,currency' => [
@@ -24,9 +20,12 @@ class DashboardController extends Controller
             ], 'recipientAccount:id,user_id,number,name,currency' => [
                 'user:id,name',
             ]])
-            ->latest()
-            ->get();
-        //dd($transactions);
+            ->accountNumber($request->search_account)
+            ->recipientName($request->search_name);
+        if ($request->start_date && $request->end_date) {
+            $transactions->dateRange($request->start_date, $request->end_date);
+        }
+        $transactions = $transactions->latest()->paginate(5);
         return Inertia::render('Dashboard', ['accounts' => $accounts, 'transactions' => $transactions]);
     }
 }

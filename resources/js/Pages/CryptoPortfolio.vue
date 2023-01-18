@@ -89,8 +89,8 @@ const formatDate = (date) => format(new Date(date), 'dd-MM-yyyy');
                                           <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M4.5 15.75l7.5-7.5 7.5 7.5"/>
                                         </svg>
-                                        +{{ formatPrice(Number(crypto.average_price), crypto.currency) }}
-                                        <span class="ml-1">({{ Number(((crypto.current_price - crypto.average_price) / crypto.average_price) * 100).toFixed(2) }}%)</span>
+                                        {{ formatPrice(Number(crypto.average_price), crypto.currency) }}
+                                        <span class="ml-1">(+{{ Number(((crypto.current_price - crypto.average_price) / crypto.average_price) * 100).toFixed(2) }}%)</span>
                                     </span>
                                 </Link>
                             </td>
@@ -111,7 +111,9 @@ const formatDate = (date) => format(new Date(date), 'dd-MM-yyyy');
                         </tr>
                         </tbody>
                     </table>
-                    <h1>Transactions:</h1>
+                </div>
+
+                <div class="mt-5 bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <table class="w-full whitespace-nowrap">
                         <thead>
                         <tr class="text-left font-bold">

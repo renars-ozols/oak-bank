@@ -33,4 +33,25 @@ class Transaction extends Model
             set: fn($value) => $value * 100
         );
     }
+
+    public function scopeRecipientName($query, $name)
+    {
+        return $query->whereHas('recipientAccount.user', function ($query) use ($name) {
+            $query->where('name', 'like', '%'.$name.'%');
+        });
+    }
+
+    public function scopeAccountNumber($query, $number)
+    {
+        return $query->whereHas('senderAccount', function ($q) use ($number) {
+            $q->where('number', 'like', '%'.$number.'%');
+        })->orWhereHas('recipientAccount', function ($q) use ($number) {
+            $q->where('number', 'like', '%'.$number.'%');
+        });
+    }
+
+    public function scopeDateRange($query, $start_date, $end_date)
+    {
+        return $query->whereBetween('created_at', [$start_date, $end_date]);
+    }
 }
