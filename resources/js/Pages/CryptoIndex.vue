@@ -1,7 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {Link} from '@inertiajs/inertia-vue3';
-import Welcome from '@/Components/Welcome.vue';
 
 const props = defineProps({
     cryptos: Array,

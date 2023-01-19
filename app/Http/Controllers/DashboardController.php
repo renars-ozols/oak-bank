@@ -10,7 +10,6 @@ class DashboardController extends Controller
 {
     public function index(TransactionFilterRequest $request)
     {
-        //dd($request->all());
         $accounts = auth()->user()->accounts()->get();
         $transactions = Transaction::query()
             ->whereIn('sender_account_id', $accounts->pluck('id'))
@@ -20,11 +19,12 @@ class DashboardController extends Controller
             ], 'recipientAccount:id,user_id,number,name,currency' => [
                 'user:id,name',
             ]])
-            ->accountNumber($request->search_account)
-            ->recipientName($request->search_name);
+            ->accountNumber($request->validated('search_account'))
+            ->recipientName($request->validated('search_name'));
         if ($request->start_date && $request->end_date) {
-            $transactions->dateRange($request->start_date, $request->end_date);
+            $transactions->dateRange($request->validated('start_date'), $request->validated('end_date'));
         }
+
         $transactions = $transactions->latest()->paginate(5);
         return Inertia::render('Dashboard', ['accounts' => $accounts, 'transactions' => $transactions]);
     }

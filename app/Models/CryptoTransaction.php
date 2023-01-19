@@ -10,9 +10,6 @@ class CryptoTransaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'account_id',
-        'user_crypto_id',
         'crypto_id',
         'type',
         'account_number',

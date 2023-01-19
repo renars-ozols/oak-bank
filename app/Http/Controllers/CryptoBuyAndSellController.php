@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BuyCryptoRequest;
+use App\Http\Requests\SellCryptoRequest;
 use App\Services\Crypto\BuyCryptoService;
+use App\Services\Crypto\BuyCryptoServiceRequest;
 use App\Services\Crypto\SellCryptoService;
+use App\Services\Crypto\SellCryptoServiceRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class CryptoBuyAndSellController extends Controller
 {
@@ -18,23 +21,23 @@ class CryptoBuyAndSellController extends Controller
         $this->sellCryptoService = $sellCryptoService;
     }
 
-    public function buy(Request $request, string $id): RedirectResponse
+    public function buy(BuyCryptoRequest $request, string $id): RedirectResponse
     {
-        //TODO: implement buy crypto
-        //TODO: change request to dto
-        //TODO: add validation
-        //TODO: return type, redirect after execute
-        $this->buyCryptoService->execute($request, $id);
+        $this->buyCryptoService->execute(new BuyCryptoServiceRequest(
+            $request->validated('account'),
+            $id,
+            $request->validated('amount'),
+        ));
         return redirect()->route('user-cryptos.index');
     }
 
-    public function sell(Request $request, string $id): RedirectResponse
+    public function sell(SellCryptoRequest $request, string $id): RedirectResponse
     {
-        //TODO: implement sell crypto
-        //TODO: change request to dto
-        //TODO: add validation
-        //TODO: return type, redirect after execute
-        $this->sellCryptoService->execute($request, $id);
+        $this->sellCryptoService->execute(new SellCryptoServiceRequest(
+            $request->validated('account'),
+            $id,
+            $request->validated('amount'),
+        ));
         return redirect()->route('user-cryptos.index');
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BalanceTransferController;
 use App\Http\Controllers\CryptoBuyAndSellController;
 use App\Http\Controllers\CryptoController;
 use App\Http\Controllers\DashboardController;
@@ -39,8 +40,8 @@ Route::middleware([
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/accounts/create', [AccountController::class, 'create'])->name('accounts.create');
     Route::post('/dashboard/accounts', [AccountController::class, 'store'])->name('accounts.store');
-    Route::get('/dashboard/accounts/transfer', [AccountController::class, 'createTransfer'])->name('accounts.create.transfer');
-    Route::post('/dashboard/accounts/transfer', [AccountController::class, 'transfer'])->name('accounts.transfer');
+    Route::get('/dashboard/accounts/transfer', [BalanceTransferController::class, 'showForm'])->name('accounts.transfer.show-form');
+    Route::post('/dashboard/accounts/transfer', [BalanceTransferController::class, 'transfer'])->name('accounts.transfer');
     Route::get('/dashboard/user-cryptos', [UserCryptoController::class, 'index'])->name('user-cryptos.index');
     Route::get('/crypto', [CryptoController::class, 'index'])->name('crypto.index');
     Route::get('/crypto/{id}', [CryptoController::class, 'show'])->name('crypto.show');

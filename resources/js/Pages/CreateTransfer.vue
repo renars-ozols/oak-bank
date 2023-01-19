@@ -22,7 +22,7 @@ const submit = () => {
     form.transform(data => ({
         ...data,
     })).post(route('accounts.transfer'), {
-        onFinish: () => form.reset('name', 'currency'),
+        onFinish: () => form.reset('account', 'recipient', 'amount'),
     });
 };
 </script>
@@ -46,7 +46,7 @@ const submit = () => {
                                 class="mt-1 block w-full"
                                 v-model="form.account"
                                 :options="accounts"
-                                valueProp="id"
+                                valueProp="number"
                                 displayProp="number"
                                 required
                                 autofocus

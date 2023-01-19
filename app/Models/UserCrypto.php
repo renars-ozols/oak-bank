@@ -12,9 +12,7 @@ class UserCrypto extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'crypto_id',
-        'account_id',
         'name',
         'symbol',
         'logo',

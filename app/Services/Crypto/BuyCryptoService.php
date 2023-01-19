@@ -2,10 +2,9 @@
 
 namespace App\Services\Crypto;
 
+use App\Models\Account;
 use App\Models\CryptoTransaction;
-use App\Models\UserCrypto;
 use App\Repositories\Crypto\CryptoRepository;
-use Illuminate\Http\Request;
 
 class BuyCryptoService
 {
@@ -16,39 +15,39 @@ class BuyCryptoService
         $this->repository = $repository;
     }
 
-    public function execute(Request $request, string $id)
+    public function execute(BuyCryptoServiceRequest $request)
     {
-        //TODO: change request to dto
-        $userAccount = auth()->user()->accounts()->where('number', $request->account)->first();
-        $crypto = $this->repository->find($id, $userAccount->currency);
+        $userAccount = Account::query()->where('number', $request->getAccount())->first();
+        $crypto = $this->repository->find($request->getCoinId(), $userAccount->currency);
 
         //TODO: wrap in transaction
-        $userAccount->withdraw($crypto->price * $request->amount);
+        $userAccount->withdraw($crypto->price * $request->getAmount());
 
-        $userCrypto = UserCrypto::firstOrNew([
-            'user_id' => auth()->user()->id,
+        $userCrypto = $userAccount->cryptos()->firstOrNew([
             'crypto_id' => $crypto->id,
-            'account_id' => $userAccount->id,
             'name' => $crypto->name,
             'symbol' => $crypto->symbol,
             'logo' => $crypto->logo,
             'currency' => $userAccount->currency,
         ]);
-        $userCrypto->amount += $request->amount;
+        $userCrypto->user_id = $userAccount->user_id;
+        $userCrypto->amount += $request->getAmount();
         $userCrypto->save();
 
-        CryptoTransaction::create([
-            'user_id' => auth()->user()->id,
-            'account_id' => $userAccount->id,
-            'user_crypto_id' => $userCrypto->id,
-            'crypto_id' => $crypto->id,
-            'type' => 'buy',
-            'account_number' => $userAccount->number,
-            'currency' => $userAccount->currency,
-            'crypto_name' => $crypto->name,
-            'amount' => $request->amount,
-            'crypto_price' => $crypto->price,
-            'total' => $crypto->price * $request->amount,
-        ]);
+        //create transaction
+
+        $transaction = new CryptoTransaction();
+        $transaction->crypto_id = $crypto->id;
+        $transaction->type = 'buy';
+        $transaction->currency = $userAccount->currency;
+        $transaction->crypto_name = $crypto->name;
+        $transaction->amount = $request->getAmount();
+        $transaction->crypto_price = $crypto->price;
+        $transaction->total = $crypto->price * $request->getAmount();
+        $transaction->account_number = $userAccount->number;
+        $transaction->user()->associate($userAccount->user);
+        $transaction->account()->associate($userAccount);
+        $transaction->userCrypto()->associate($userCrypto);
+        $transaction->save();
     }
 }

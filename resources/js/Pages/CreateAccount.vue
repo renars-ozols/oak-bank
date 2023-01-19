@@ -11,6 +11,10 @@ const props = defineProps({
     currencies: Array,
 });
 
+const data = {
+    selected: null,
+};
+
 const form = useForm({
     name: '',
     currency: 'EUR',
@@ -38,7 +42,7 @@ const submit = () => {
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <form @submit.prevent="submit" class="w-1/2 mx-auto py-8">
                         <div>
-                            <InputLabel for="name" value="Name" />
+                            <InputLabel for="name" value="Name"/>
                             <TextInput
                                 id="name"
                                 v-model="form.name"
@@ -47,23 +51,24 @@ const submit = () => {
                                 required
                                 autofocus
                             />
-                            <InputError class="mt-2" :message="form.errors.name" />
+                            <InputError class="mt-2" :message="form.errors.name"/>
                         </div>
 
-                        <div class="mt-4">
-                            <InputLabel for="currency" value="Currency" />
+                        <div class="select-wrapper mt-4">
+                            <InputLabel for="currency" value="Currency"/>
                             <SelectInput
                                 id="currency"
                                 v-model="form.currency"
-                                :options="currencies"
-                                class="mt-1 block w-full"
+                                :options="currencies.slice(0, 10)"
+                                class="mt-1 block w-full select"
                                 required
                             />
-                            <InputError class="mt-2" :message="form.errors.currency" />
+                            <InputError class="mt-2" :message="form.errors.currency"/>
                         </div>
 
                         <div class="flex items-center justify-end mt-4">
-                            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
+                                           :disabled="form.processing">
                                 Create
                             </PrimaryButton>
                         </div>

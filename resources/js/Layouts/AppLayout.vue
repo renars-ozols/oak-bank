@@ -61,7 +61,7 @@ const logout = () => {
                                 <NavLink :href="route('accounts.create')" :active="route().current('accounts.create')">
                                     Create an account
                                 </NavLink>
-                                <NavLink :href="route('accounts.create.transfer')" :active="route().current('accounts.create.transfer')">
+                                <NavLink :href="route('accounts.transfer.show-form')" :active="route().current('accounts.create.transfer')">
                                     Transfer money
                                 </NavLink>
                                 <NavLink :href="route('crypto.index')" :active="route().current('crypto.index')">

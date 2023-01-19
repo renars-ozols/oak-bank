@@ -5,7 +5,6 @@ namespace App\Services\Account;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Repositories\Currencies\CurrencyRepository;
-use Illuminate\Http\Request;
 
 class TransferService
 {
@@ -16,12 +15,10 @@ class TransferService
         $this->currencyRepository = $currencyRepository;
     }
 
-    public function execute(Request $request): void
+    public function execute(TransferServiceRequest $request): void
     {
-        //TODO: clean up
-        //dd($request->all());
-        $userAccount = auth()->user()->accounts()->where('id', $request->input('account'))->first();
-        $recipientAccount = Account::query()->where('number', $request->input('recipient'))->first();
+        $userAccount = Account::query()->where('number', $request->getAccount())->first();
+        $recipientAccount = Account::query()->where('number', $request->getRecipient())->first();
         $currencies = $this->currencyRepository->all();
 
         $senderCurrency = $currencies->where('symbol', $userAccount->currency)->first();
@@ -33,14 +30,13 @@ class TransferService
         $exchangeRate = $recipientCurrencyRate / $senderCurrencyRate;
 
         //TODO: database transaction
-        $userAccount->withdraw((float) $request->input('amount'));
-        $recipientAccount->deposit($request->input('amount') * $exchangeRate);
+        $userAccount->withdraw($request->getAmount());
+        $recipientAccount->deposit($request->getAmount() * $exchangeRate);
 
-        //TODO: create transaction
         Transaction::query()->create([
             'sender_account_id' => $userAccount->id,
             'recipient_account_id' => $recipientAccount->id,
-            'amount' => $request->input('amount') * $exchangeRate,
+            'amount' => $request->getAmount() * $exchangeRate,
         ]);
     }
 }
