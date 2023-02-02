@@ -34,4 +34,19 @@ class CryptoTransaction extends Model
     {
         return $this->belongsTo(UserCrypto::class);
     }
+
+    public function scopeAccountNumber($query, $number)
+    {
+        return $query->where('account_number', 'like', '%'.$number.'%');
+    }
+
+    public function scopeDateRange($query, $start_date, $end_date)
+    {
+        return $query->whereBetween('created_at', [$start_date, $end_date]);
+    }
+
+    public function scopeCryptoName($query, $name)
+    {
+        return $query->where('crypto_name', 'like', '%'.$name.'%');
+    }
 }

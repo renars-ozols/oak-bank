@@ -6,6 +6,7 @@ use App\Http\Requests\BalanceTransferRequest;
 use App\Services\Account\TransferService;
 use App\Services\Account\TransferServiceRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,8 +21,9 @@ class BalanceTransferController extends Controller
 
     public function showForm(): Response
     {
-        $accounts = auth()->user()->accounts()->get();
-        return Inertia::render('CreateTransfer', ['accounts' => $accounts]);
+        $accounts = auth()->user()->accounts()->get();;
+        Session::put('codeIndex', auth()->user()->randomCodeIndex);
+        return Inertia::render('CreateTransfer', ['accounts' => $accounts, 'code' => Session::get('codeIndex')]);
     }
 
     public function transfer(BalanceTransferRequest $request): RedirectResponse
@@ -31,6 +33,6 @@ class BalanceTransferController extends Controller
             $request->validated('recipient'),
             $request->validated('amount')
         ));
-        return redirect()->route('dashboard');
+        return redirect()->route('accounts.index');
     }
 }

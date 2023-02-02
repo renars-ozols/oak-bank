@@ -10,17 +10,14 @@ class CoinMarketCapApiCryptoRepository implements CryptoRepository
 {
     public function all(): Collection
     {
-        // TODO: Implement all() method.
-        // TODO: return types
         $currency = 'EUR';
         $response = Http::crypto()->get('v1/cryptocurrency/listings/latest', [
             'limit' => '10',
             'convert' => $currency,
         ])->json();
-        //dd($response);
+
         $logos = $this->getLogos($response['data']);
-        //dd($logos);
-        //dd($response['data']);
+
         return collect($response['data'])->map(function ($crypto) use ($currency, $logos) {
             $crypto['logo'] = $logos[$crypto['id']]['logo'];
             return $this->buildModel($crypto, $currency);
@@ -29,7 +26,6 @@ class CoinMarketCapApiCryptoRepository implements CryptoRepository
 
     public function find(string $id, string $currency): Crypto
     {
-        // TODO: Implement find() method.
         $response = Http::crypto()->get('v2/cryptocurrency/quotes/latest', [
             'id' => $id,
             'convert' => $currency,
@@ -46,14 +42,22 @@ class CoinMarketCapApiCryptoRepository implements CryptoRepository
         return $this->buildModel($coin, $currency);
     }
 
+    public function findIdBySymbol(string $symbol): int
+    {
+        $response = Http::crypto()->get('v1/cryptocurrency/map', [
+            'symbol' => $symbol,
+        ])->json();
+
+        return $response['data'][0]['id'];
+    }
+
     public function getCurrentPrice(string $id, string $currency): float
     {
-        // TODO: Implement getCurrentPrice() method.
         $response = Http::crypto()->get('v2/cryptocurrency/quotes/latest', [
             'id' => $id,
             'convert' => $currency,
         ])->json();
-        // return current price
+
         return $response['data'][$id]['quote'][$currency]['price'];
     }
 
@@ -72,7 +76,7 @@ class CoinMarketCapApiCryptoRepository implements CryptoRepository
         ]);
     }
 
-    private function getLogos(mixed $data)
+    private function getLogos(mixed $data): array
     {
         $ids = [];
         foreach ($data as $coin) {

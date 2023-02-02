@@ -30,7 +30,7 @@ const submitBuyForm = () => {
     buyForm.transform(data => ({
         ...data,
     })).post(route('crypto.buy', props.crypto.id), {
-        onFinish: () => buyForm.reset('name', 'currency'),
+        onFinish: () => buyForm.reset('account', 'amount'),
     });
 };
 
@@ -38,12 +38,12 @@ const submitSellForm = () => {
     sellForm.transform(data => ({
         ...data,
     })).post(route('crypto.sell', props.crypto.id), {
-        onFinish: () => sellForm.reset('name', 'currency'),
+        onFinish: () => sellForm.reset('account', 'amount'),
     });
 };
 
 const onAccountChange = (event) => {
-    const currency = event.target.options[event.target.selectedIndex].text.split(' ')[0];
+    const currency = event.target.options[event.target.selectedIndex].text.split(' ')[1];
 
     Inertia.get(route('crypto.show', {id: props.crypto.id}), {
         currency: currency,
@@ -82,7 +82,7 @@ const onSellAccountChange = (event) => {
                             <span class="">{{ formatMoney(crypto.price, crypto.currency) }}</span>
                         </div>
                         <div>
-                            <div class="flex mb-2">
+                            <div class="flex mb-2 justify-between">
                                 <span class="font-bold text-xl mr-4">Percent change 1h %:</span>
                                 <span v-if="crypto.percentChange1h < 0" class="text-red-500 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -102,7 +102,7 @@ const onSellAccountChange = (event) => {
                                     +{{ crypto.percentChange1h.toFixed(2) }}%
                                 </span>
                             </div>
-                            <div class="flex mb-2">
+                            <div class="flex mb-2 justify-between">
                                 <span class="font-bold text-xl mr-4">Percent change 24h %:</span>
                                 <span v-if="crypto.percentChange24h < 0" class="text-red-500 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -122,7 +122,7 @@ const onSellAccountChange = (event) => {
                                     +{{ crypto.percentChange24h.toFixed(2) }}%
                                 </span>
                             </div>
-                            <div class="flex mb-2">
+                            <div class="flex mb-2 justify-between">
                                 <span class="font-bold text-xl mr-4">Percent change 7d %:</span>
                                 <span v-if="crypto.percentChange7d < 0" class="text-red-500 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -153,6 +153,7 @@ const onSellAccountChange = (event) => {
                                     v-model="buyForm.account"
                                     :options="accounts"
                                     valueProp="number"
+                                    displayProp="name"
                                     @change="onAccountChange($event)"
                                     class="mt-1 block w-full"
                                     required
@@ -187,6 +188,7 @@ const onSellAccountChange = (event) => {
                                     :options="accountsWithCrypto"
                                     @change="onSellAccountChange($event)"
                                     valueProp="number"
+                                    displayProp="name"
                                     class="mt-1 block w-full"
                                     required
                                 />

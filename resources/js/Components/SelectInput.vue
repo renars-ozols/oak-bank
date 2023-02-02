@@ -39,7 +39,8 @@ defineExpose({focus: () => input.value.focus()});
     >
         <template v-for="option in options">
             <option :value="option[valueProp]">{{ option[displayProp] }} {{ option.currency }} {{
-                    option.balance }}
+                    option.balance
+                }}
             </option>
         </template>
     </select>

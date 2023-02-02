@@ -5,10 +5,9 @@ use App\Http\Controllers\BalanceTransferController;
 use App\Http\Controllers\CryptoBuyAndSellController;
 use App\Http\Controllers\CryptoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SearchCryptoController;
 use App\Http\Controllers\UserCryptoController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,14 +20,6 @@ use Inertia\Inertia;
 |
 */
 
-//Route::get('/', function () {
-//    return Inertia::render('Welcome', [
-//        'canLogin' => Route::has('login'),
-//        'canRegister' => Route::has('register'),
-//        'laravelVersion' => Application::VERSION,
-//        'phpVersion' => PHP_VERSION,
-//    ]);
-//});
 Route::redirect('/', '/login');
 
 Route::middleware([
@@ -36,14 +27,16 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    //TODO: cleanup routes
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/accounts/create', [AccountController::class, 'create'])->name('accounts.create');
-    Route::post('/dashboard/accounts', [AccountController::class, 'store'])->name('accounts.store');
-    Route::get('/dashboard/accounts/transfer', [BalanceTransferController::class, 'showForm'])->name('accounts.transfer.show-form');
-    Route::post('/dashboard/accounts/transfer', [BalanceTransferController::class, 'transfer'])->name('accounts.transfer');
-    Route::get('/dashboard/user-cryptos', [UserCryptoController::class, 'index'])->name('user-cryptos.index');
+    Route::get('/accounts', [AccountController::class, 'index'])->name('accounts.index');
+    Route::get('/accounts/create', [AccountController::class, 'create'])->name('accounts.create');
+    Route::post('/accounts', [AccountController::class, 'store'])->name('accounts.store');
+    Route::get('/accounts/{account}/edit', [AccountController::class, 'edit'])->name('accounts.edit');
+    Route::put('/accounts/{account}', [AccountController::class, 'update'])->name('accounts.update');
+    Route::get('/accounts/transfer', [BalanceTransferController::class, 'showForm'])->name('accounts.transfer.show-form');
+    Route::post('/accounts/transfer', [BalanceTransferController::class, 'transfer'])->name('accounts.transfer');
+    Route::get('/user-cryptos', [UserCryptoController::class, 'index'])->name('user-cryptos.index');
     Route::get('/crypto', [CryptoController::class, 'index'])->name('crypto.index');
+    Route::get('/crypto/search', [SearchCryptoController::class, 'search'])->name('crypto.search');
     Route::get('/crypto/{id}', [CryptoController::class, 'show'])->name('crypto.show');
     Route::post('/crypto/{id}/buy', [CryptoBuyAndSellController::class, 'buy'])->name('crypto.buy');
     Route::post('/crypto/{id}/sell', [CryptoBuyAndSellController::class, 'sell'])->name('crypto.sell');

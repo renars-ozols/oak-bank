@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'code_card',
     ];
 
     /**
@@ -72,5 +74,13 @@ class User extends Authenticatable
     public function cryptoTransactions()
     {
         return $this->hasMany(CryptoTransaction::class);
+    }
+
+    public function randomCodeIndex(): Attribute
+    {
+        $codes = explode(' ', $this->code_card);
+        return Attribute::make(
+            get: fn() => rand(0, count($codes) - 1),
+        );
     }
 }

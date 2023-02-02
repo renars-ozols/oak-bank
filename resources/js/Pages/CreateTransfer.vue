@@ -10,12 +10,14 @@ import NumericInput from "@/Components/NumericInput.vue";
 
 const props = defineProps({
     accounts: Array,
+    code: Number,
 });
 
 const form = useForm({
     account: '',
     recipient: '',
     amount: '',
+    code: '',
 });
 
 const submit = () => {
@@ -40,7 +42,7 @@ const submit = () => {
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <form @submit.prevent="submit" class="w-1/2 mx-auto py-8">
                         <div>
-                            <InputLabel for="account" value="From account" />
+                            <InputLabel for="account" value="From account"/>
                             <SelectInput
                                 id="account"
                                 class="mt-1 block w-full"
@@ -51,23 +53,23 @@ const submit = () => {
                                 required
                                 autofocus
                             />
-                            <InputError class="mt-2" :message="form.errors.account" />
+                            <InputError class="mt-2" :message="form.errors.account"/>
                         </div>
 
                         <div class="mt-4">
-                            <InputLabel for="recipient" value="Recipient account" />
+                            <InputLabel for="recipient" value="Recipient account"/>
                             <TextInput
                                 id="recipient"
                                 v-model="form.recipient"
                                 type="text"
                                 class="mt-1 block w-full"
                                 required
-                                />
-                            <InputError class="mt-2" :message="form.errors.recipient" />
+                            />
+                            <InputError class="mt-2" :message="form.errors.recipient"/>
                         </div>
 
                         <div class="mt-4">
-                            <InputLabel for="amount" value="Amount" />
+                            <InputLabel for="amount" value="Amount"/>
                             <NumericInput
                                 id="amount"
                                 v-model="form.amount"
@@ -75,11 +77,24 @@ const submit = () => {
                                 class="mt-1 block w-full"
                                 required
                             />
-                            <InputError class="mt-2" :message="form.errors.amount" />
+                            <InputError class="mt-2" :message="form.errors.amount"/>
+                        </div>
+
+                        <div class="mt-4">
+                            <InputLabel for="code" :value="`Enter code number: `+ (code + 1)"/>
+                            <NumericInput
+                                id="amount"
+                                v-model="form.code"
+                                type="number"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError class="mt-2" :message="form.errors.code"/>
                         </div>
 
                         <div class="flex items-center justify-end mt-4">
-                            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
+                                           :disabled="form.processing">
                                 Transfer
                             </PrimaryButton>
                         </div>

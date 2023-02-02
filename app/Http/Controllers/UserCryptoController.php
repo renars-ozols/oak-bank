@@ -2,31 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Crypto\IndexUserCryptoService;
-use Illuminate\Http\Request;
+use App\Http\Requests\CryptoTransactionFilterRequest;
+use App\Repositories\Crypto\CryptoRepository;
 use Inertia\Inertia;
 
 class UserCryptoController extends Controller
 {
-    private IndexUserCryptoService $indexUserCryptoService;
+    private CryptoRepository $repository;
 
-    public function __construct(IndexUserCryptoService $indexUserCryptoService)
+    public function __construct(CryptoRepository $repository)
     {
-        $this->indexUserCryptoService = $indexUserCryptoService;
+        $this->repository = $repository;
     }
 
-    public function index()
+    public function index(CryptoTransactionFilterRequest $request)
     {
-        //select only account number
-//        $cryptos = auth()->user()->cryptos()
-//            ->select('user_cryptos.*', 'accounts.number as account')
-//            ->join('accounts', 'accounts.id', '=', 'user_cryptos.account_id')
-//            ->get();
-        $collection = $this->indexUserCryptoService->execute(auth()->id());
-        //dd($collection->get('cryptos'));
+        $cryptos = auth()->user()->cryptos()->get()->map(function ($crypto) {
+            $crypto->account = $crypto->account()->pluck('name')->first();
+            $crypto->current_price = $this->repository->getCurrentPrice($crypto->crypto_id, $crypto->currency);
+            $crypto->current_value = $crypto->current_price * $crypto->amount;
+            $crypto->average_price = $crypto->transactions()->where('type', 'buy')->avg('crypto_price');
+            return $crypto;
+        });
+
+        $transactions = auth()->user()->cryptoTransactions()->accountNumber($request->validated('search_account'))
+            ->cryptoName($request->validated('search_crypto'));
+        if ($request->start_date && $request->end_date) {
+            $transactions->dateRange($request->validated('start_date'), $request->validated('end_date'));
+        }
+        $transactions = $transactions->latest()->paginate(5);
+
         return Inertia::render('CryptoPortfolio', [
-            'cryptos' => $collection->get('cryptos'),
-            'transactions' => $collection->get('transactions'),
+            'cryptos' => $cryptos,
+            'transactions' => $transactions,
         ]);
     }
 }

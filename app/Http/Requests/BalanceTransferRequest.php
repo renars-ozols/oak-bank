@@ -23,10 +23,13 @@ class BalanceTransferRequest extends FormRequest
      */
     public function rules()
     {
+        $codes = explode(' ', auth()->user()->code_card);
+
         return [
             'account' => 'required|exists:accounts,number,user_id,' . auth()->user()->id,
             'recipient' => 'required|exists:accounts,number',
             'amount' => 'required|numeric|min:0.01|max:' . auth()->user()->accounts()->where('number', $this->input('account'))->first()->balance,
+            'code' => 'required|in:' . $codes[$this->session()->get('codeIndex')]
         ];
     }
 }

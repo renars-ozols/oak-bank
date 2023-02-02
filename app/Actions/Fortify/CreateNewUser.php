@@ -31,6 +31,10 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            //string with five 4 digit random codes
+            'code_card' => implode(' ', array_map(function () {
+                return rand(1000, 9999);
+            }, range(1, 5))),
         ]);
 
         $user->accounts()->create([

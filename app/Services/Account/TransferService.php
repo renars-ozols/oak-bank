@@ -5,6 +5,7 @@ namespace App\Services\Account;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Repositories\Currencies\CurrencyRepository;
+use Illuminate\Support\Facades\DB;
 
 class TransferService
 {
@@ -29,14 +30,15 @@ class TransferService
 
         $exchangeRate = $recipientCurrencyRate / $senderCurrencyRate;
 
-        //TODO: database transaction
-        $userAccount->withdraw($request->getAmount());
-        $recipientAccount->deposit($request->getAmount() * $exchangeRate);
+        DB::transaction(function () use ($userAccount, $recipientAccount, $request, $exchangeRate) {
+            $userAccount->withdraw($request->getAmount());
+            $recipientAccount->deposit($request->getAmount() * $exchangeRate);
 
-        Transaction::query()->create([
-            'sender_account_id' => $userAccount->id,
-            'recipient_account_id' => $recipientAccount->id,
-            'amount' => $request->getAmount() * $exchangeRate,
-        ]);
+            Transaction::query()->create([
+                'sender_account_id' => $userAccount->id,
+                'recipient_account_id' => $recipientAccount->id,
+                'amount' => $request->getAmount() * $exchangeRate,
+            ]);
+        });
     }
 }

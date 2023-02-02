@@ -11,5 +11,7 @@ interface CryptoRepository
 
     public function find(string $id, string $currency): Crypto;
 
+    public function findIdBySymbol(string $symbol): int;
+
     public function getCurrentPrice(string $id, string $currency): float;
 }
